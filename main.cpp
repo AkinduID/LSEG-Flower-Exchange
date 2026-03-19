@@ -15,10 +15,6 @@ class Order {
     double Price;
     int Quantity;
 
-    void readOrder(){
-        // Code to read order details from input
-    }
-
     bool operator==(const Order& other) const {
         return ClientOrderID == other.ClientOrderID &&
                Instrument == other.Instrument &&
@@ -36,8 +32,8 @@ class ExecutionReport {
     int Side;
     double Price;
     int Quantity;
-    double ExecutedPrice;
-    double ExecutedQuantity;
+    // double ExecutedPrice;
+    // double ExecutedQuantity;
     int Status;
     std::string Reason;
     std::string Timestamp;
@@ -55,16 +51,6 @@ class OrderBookSide {
         // Code to remove order from the order book side
         orders.remove(order);
     }
-
-    void getTopOfTheBook() {
-        // Code to retrieve the best bid or ask price and quantity
-        if (!orders.empty()) {
-            Order topOrder = orders.front();
-            std::cout << "Top of the book - Price: " << topOrder.Price << ", Quantity: " << topOrder.Quantity << std::endl;
-        } else {
-            std::cout << "Order book side is empty." << std::endl;
-        }
-    }
 };
 
 
@@ -73,41 +59,23 @@ class OrderBook {
     OrderBookSide buySide;
     OrderBookSide sellSide;
 
-    void processOrder(const Order& order) {
+    ExecutionReport processOrder(const Order& order) {
         // Code to process incoming orders and update the order book
-        if (isMatchingOrder(order)) {
-            matchOrder(order);
-        } else {
-            if (order.Side == 1) { // Buy order
-                buySide.insertOrder(order);
-            } else { // Sell order
-                sellSide.insertOrder(order);
-            }
-        }
-    }
-
-    bool isMatchingOrder(const Order& order) {
-        // Code to check if the incoming order matches with existing orders in the order book
         if (order.Side == 1) { // Buy order
-            // Check for matching sell orders
-            for (const auto& sellOrder : sellSide.orders) {
-                if (sellOrder.Price <= order.Price) {
-                    return true; // Found a matching sell order
-                }
-            }
+            buySide.insertOrder(order);
         } else { // Sell order
-            // Check for matching buy orders
-            for (const auto& buyOrder : buySide.orders) {
-                if (buyOrder.Price >= order.Price) {
-                    return true; // Found a matching buy order
-                }
-            }
+            sellSide.insertOrder(order);
         }
-        return false;
-    }
-
-    void matchOrder(const Order& order) {
-        // Code to match incoming orders with existing orders in the order book and generate execution reports
+        ExecutionReport report;
+        report.OrderID = 0; // Placeholder for order ID generation logic
+        report.ClientOrderID = order.ClientOrderID;
+        report.Instrument    = order.Instrument;
+        report.Side          = order.Side;
+        report.Price         = order.Price;
+        report.Quantity      = order.Quantity;
+        report.Status        = 1; // Assuming 1 means accepted
+        report.Timestamp     = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
+        return report;
     }
 };
 
@@ -141,15 +109,35 @@ class ExchangeSystem {
                 newOrder.Price         = std::stod(row[3]);   // String to Double
                 newOrder.Quantity      = std::stoi(row[4]);   // String to Int
 
-                orderBooks[newOrder.Instrument].processOrder(newOrder);
+                ExecutionReport report = orderBooks[newOrder.Instrument].processOrder(newOrder);
+                WriteFile(report);
             }
+        }
+        return;
+    }
+
+    void WriteFile(ExecutionReport report) {
+        std::ofstream outFile("execution_report.csv", std::ios::app);
+        if (outFile.is_open()) {
+            outFile << report.OrderID << ","
+                    << report.ClientOrderID << ","
+                    << report.Instrument << ","
+                    << report.Side << ","
+                    << report.Price << ","
+                    << report.Quantity << ","
+                    // << report.ExecutedPrice << ","
+                    // << report.ExecutedQuantity << ","
+                    << report.Status << ","
+                    << report.Reason << ","
+                    << report.Timestamp << "\n";
+            outFile.close();
         }
     }
 };
 
 int main(){
     ExchangeSystem exchange;
-    exchange.readFiles("order1.csv");
+    exchange.readFiles("example1.csv");
 
     for (const auto& [instrument, orderBook] : exchange.orderBooks) {
         std::cout << "Instrument: " << instrument << std::endl;
