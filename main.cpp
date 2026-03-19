@@ -11,7 +11,7 @@ class Order {
     public:
     std::string ClientOrderID;
     std::string Instrument;
-    int Side;
+    int Side; // 1 for buy, 2 for sell
     double Price;
     int Quantity;
 
@@ -43,27 +43,48 @@ class OrderBookSide {
     public:
     std::list<Order> orders;
     void insertOrder(const Order& order) {
-        // Code to add order to the order book side
-        orders.push_back(order);
+        // TODO: Currently this function only comapres the top of the list. needs sorting feature
+        Order topOrder = getTopOfTheBook();
+        // For buy orders, higher price is better; for sell orders, lower price is better
+        if (order.Price > topOrder.Price && order.Side==1 || order.Price < topOrder.Price && order.Side==2) {
+            std::cout << "Inserting order " << order.ClientOrderID << " with price " << order.Price << " at the front of the list." << std::endl;
+            orders.push_front(order);
+        } else {
+            orders.push_back(order);
+        }
     }
 
     void deleteOrder(const Order& order) {
         // Code to remove order from the order book side
         orders.remove(order);
     }
+
+    Order getTopOfTheBook() {
+        // Code to retrieve the best bid or ask price and quantity
+        if (!orders.empty()) {
+            Order topOrder = orders.front();
+            std::cout << "Top of the book - Price: " << topOrder.Price << ", Quantity: " << topOrder.Quantity << std::endl;
+            return topOrder;
+        } else {
+            std::cout << "Order book side is empty." << std::endl;
+            return Order(); // Return a default Order object
+        }
+    }
 };
 
 
 class OrderBook {
     public:
-    OrderBookSide buySide;
-    OrderBookSide sellSide;
+    OrderBookSide buySide; //Side 1 for buy orders, Higher price is better
+    OrderBookSide sellSide; //Side 2 for sell orders, Lower price is better
 
     ExecutionReport processOrder(const Order& order) {
         // Code to process incoming orders and update the order book
         if (order.Side == 1) { // Buy order
+            std::cout << "Inserting buy order" << std::endl;
             buySide.insertOrder(order);
         } else { // Sell order
+            std::cout << "Inserting sell order" << std::endl;
             sellSide.insertOrder(order);
         }
         ExecutionReport report;
@@ -106,8 +127,8 @@ class ExchangeSystem {
                 newOrder.ClientOrderID = row[0];
                 newOrder.Instrument    = row[1];
                 newOrder.Side          = std::stoi(row[2]);   // String to Int
-                newOrder.Price         = std::stod(row[3]);   // String to Double
-                newOrder.Quantity      = std::stoi(row[4]);   // String to Int
+                newOrder.Quantity        = std::stod(row[3]);   // String to Double
+                newOrder.Price         = std::stod(row[4]);   // String to Double
 
                 ExecutionReport report = orderBooks[newOrder.Instrument].processOrder(newOrder);
                 WriteFile(report);
@@ -141,11 +162,11 @@ int main(){
 
     for (const auto& [instrument, orderBook] : exchange.orderBooks) {
         std::cout << "Instrument: " << instrument << std::endl;
-        std::cout << "  Buy Orders:" << std::endl;
+        std::cout << " 1 Buy Orders:" << std::endl;
         for (const auto& order : orderBook.buySide.orders) {
             std::cout << "    ID: " << order.ClientOrderID << ", Price: " << order.Price << ", Qty: " << order.Quantity << std::endl;
         }
-        std::cout << "  Sell Orders:" << std::endl;
+        std::cout << " 2 Sell Orders:" << std::endl;
         for (const auto& order : orderBook.sellSide.orders) {
             std::cout << "    ID: " << order.ClientOrderID << ", Price: " << order.Price << ", Qty: " << order.Quantity << std::endl;
         }

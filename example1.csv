@@ -1,2 +1,7 @@
 Client Order ID,Instrument,Side,Quantity,Price
 aa13,Rose,2,100,55.0
+aa14,Rose,2,50,45.0
+aa18,Rose,2,70,50.0
+aa15,Rose,1,70,65.0
+aa16,Rose,1,70,35.0
+aa17,Rose,1,70,75.0
