@@ -132,7 +132,7 @@ class ExchangeSystem {
                 row.push_back(segment);
             }
 
-            // Now map the vector to your Order object
+            // map the vector to Order object
             if (row.size() >= 5) {
                 Order newOrder;
                 newOrder.ClientOrderID = row[0];
@@ -141,8 +141,6 @@ class ExchangeSystem {
                 newOrder.Price         = std::stod(row[3]);   // String to Double
                 newOrder.Quantity      = std::stoi(row[4]);   // String to Int
 
-                // Send this order to the correct OrderBook
-                // (Assumes your map uses the Instrument name as the key)
                 orderBooks[newOrder.Instrument].processOrder(newOrder);
             }
         }
@@ -151,9 +149,8 @@ class ExchangeSystem {
 
 int main(){
     ExchangeSystem exchange;
-    exchange.readFiles("data/inputs/order1.csv"); // Replace with your CSV file path
+    exchange.readFiles("order1.csv");
 
-    // Print the orders in each order book
     for (const auto& [instrument, orderBook] : exchange.orderBooks) {
         std::cout << "Instrument: " << instrument << std::endl;
         std::cout << "  Buy Orders:" << std::endl;
