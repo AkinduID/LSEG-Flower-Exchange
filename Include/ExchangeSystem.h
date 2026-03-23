@@ -14,9 +14,5 @@ public:
     map<string, OrderBook> orderBooks;
     vector<ExecutionReport> reports;
 
-    void readFile(const string& filePath);
-    void writeReports(const string& filePath);
-
-private:
-    bool validateOrder(const Order& order, string& reason);
+    void processOrders(const std::vector<Order>& orders);
 };

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include "../Include/ExchangeSystem.h"
+#include "../Include/FileHandler.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -11,13 +12,13 @@ int main() {
     ExchangeSystem exchange;
 
     chrono::steady_clock::time_point start = chrono::steady_clock::now();
-    
-    exchange.readFile("../Data/order.csv");
+    std::vector<Order> orders = FileHandler::readOrdersFromFile("../Data/order.csv");
+    exchange.processOrders(orders);
 
-    exchange.writeReports("../Data/execution_report.csv");
+    FileHandler::writeReportsToFile("../Data/execution_report.csv", exchange.reports);
 
     chrono::steady_clock::time_point end = chrono::steady_clock::now();
-    
+
     for (auto it = exchange.orderBooks.begin(); it != exchange.orderBooks.end(); ++it) {
         it->second.printOrderBook(it->first);
     }

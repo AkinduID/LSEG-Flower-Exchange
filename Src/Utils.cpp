@@ -1,4 +1,5 @@
 #include "../Include/Utils.h"
+#include "../Include/Order.h"
 #include <chrono>
 #include <ctime>
 #include <string>
@@ -29,6 +30,36 @@ std::string getTimestamp() {
 std::string generateOrderId() {
     static int counter = 1;
     return "ord" + std::to_string(counter++);
+}
+
+bool validateOrder(const Order& o, string& reason) {
+
+    if (o.instrument != "Rose" &&
+        o.instrument != "Lavender" &&
+        o.instrument != "Lotus" &&
+        o.instrument != "Tulip" &&
+        o.instrument != "Orchid") {
+
+        reason = "Invalid Instrument";
+        return false;
+        }
+
+    if (o.side != 1 && o.side != 2) {
+        reason = "Invalid Side";
+        return false;
+    }
+
+    if (o.price <= 0) {
+        reason = "Invalid Price";
+        return false;
+    }
+
+    if (o.quantity < 10 || o.quantity > 1000 || o.quantity % 10 != 0) {
+        reason = "Invalid Quantity";
+        return false;
+    }
+
+    return true;
 }
 
 } // namespace Utils
