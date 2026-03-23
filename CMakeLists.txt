@@ -14,4 +14,6 @@ add_executable(LSEG_Flower_Exchange
         Src/OrderBookSide.cpp
         Include/OrderBookSide.h
         Src/ExchangeSystem.cpp
-        Include/ExchangeSystem.h)
+        Include/ExchangeSystem.h
+        Src/Utils.cpp
+        Include/Utils.h)
