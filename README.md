@@ -170,7 +170,7 @@ Write execution_rep.csv
 
 ## 👥 Contributors
 
-* Your Name
-* Partner Name
+* [Wimukthi Madushan](https://github.com/WimukthiMadushan)
+* [Akindu Delgahagoda](https://github.com/AkinduID)
 
 ---
