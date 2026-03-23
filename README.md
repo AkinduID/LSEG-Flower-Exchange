@@ -158,6 +158,50 @@ Write execution_rep.csv
 
 ---
 
+
+---
+
+## 🛠️ How to Compile & Run
+
+### Prerequisites
+
+- **C++ Compiler** (e.g., GCC, Clang, or MSVC)
+- **CMake** (version 3.10 or higher recommended)
+
+### Build Steps
+
+1. **Clone or download this repository.**
+2. **Open a terminal and navigate to the project root directory.**
+3. **Create a build directory:**
+  ```sh
+  mkdir build
+  cd build
+  ```
+4. **Run CMake to generate build files:**
+  ```sh
+  cmake ..
+  ```
+5. **Build the project:**
+  ```sh
+  cmake --build .
+  ```
+
+### Running the Program
+
+After building, an executable (e.g., `LSEG_Flower_Exchange.exe` on Windows) will be created in the `build` directory.
+
+To run the program:
+
+```sh
+./LSEG_Flower_Exchange.exe
+```
+
+Make sure your input file (e.g., `orders.csv`) is in the correct location as expected by the program.
+
+The output (e.g., `execution_rep.csv`) will be generated in the appropriate directory after execution.
+
+---
+
 ## 🚀 Key Highlights
 
 * Simulates real-world trading systems
