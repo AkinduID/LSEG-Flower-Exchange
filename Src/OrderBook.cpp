@@ -161,23 +161,9 @@ void OrderBook::matchOrder(Order& order) {
 void OrderBook::addOrder(const Order& order) {
 
     if (order.side == 1) {
-        buySide.orders.push_back(order);
-
-        // Sort BUY: highest price first, then by time priority (earlier orders first)
-        buySide.orders.sort([](const Order& a, const Order& b) {
-            if (a.price != b.price)
-                return a.price > b.price;  // Descending by price (highest first)
-            return a.sequence < b.sequence;  // FIFO for same price
-        });
+        buySide.insertOrder(order, true);
 
     } else {
-        sellSide.orders.push_back(order);
-
-        // Sort SELL: lowest price first, then by time priority (earlier orders first)
-        sellSide.orders.sort([](const Order& a, const Order& b) {
-            if (a.price != b.price)
-                return a.price < b.price;  // Ascending by price (lowest first)
-            return a.sequence < b.sequence;  // FIFO for same price
-        });
+        sellSide.insertOrder(order, false);
     }
 }
