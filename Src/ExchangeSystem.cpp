@@ -11,15 +11,15 @@
 
 using namespace std;
 
-std::string getStatusText(int status) {
-    switch (status) {
-        case 0: return "New";
-        case 1: return "Rejected";
-        case 2: return "Fill";
-        case 3: return "Pfill";
-        default: return "Unknown";
-    }
-}
+// std::string getStatusText(int status) {
+//     switch (status) {
+//         case 0: return "New";
+//         case 1: return "Rejected";
+//         case 2: return "Fill";
+//         case 3: return "Pfill";
+//         default: return "Unknown";
+//     }
+// }
 
 void ExchangeSystem::readFile(const string& filePath) {
 
@@ -174,7 +174,7 @@ void ExchangeSystem::writeReports(const string& filePath) {
              << r.clientOrderId << ","
              << r.instrument << ","
              << r.side << ","
-             << getStatusText(r.status) << ","
+             << Utils::getStatusText(r.status) << ","
              << r.quantity << ","
              << fixed << setprecision(2) << r.price << ","
              << r.timestamp << "\n";

@@ -7,6 +7,16 @@
 
 namespace Utils {
 
+std::string getStatusText(int status) {
+    switch (status) {
+        case 0: return "New";
+        case 1: return "Rejected";
+        case 2: return "Fill";
+        case 3: return "Pfill";
+        default: return "Unknown";
+    }
+}
+    
 std::string getTimestamp() {
     auto now = std::chrono::system_clock::now();
     auto time = std::chrono::system_clock::to_time_t(now);
