@@ -10,8 +10,8 @@ int main() {
     ExchangeSystem exchange;
 
     exchange.readFile("../Data/order.csv");
-    for (const auto& [instrument, book] : exchange.orderBooks) {
-        book.printOrderBook(instrument);
+    for (auto it = exchange.orderBooks.begin(); it != exchange.orderBooks.end(); ++it) {
+        it->second.printOrderBook(it->first);
     }
     exchange.writeReports("../Data/execution_report.csv");
 

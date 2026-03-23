@@ -51,6 +51,7 @@ void ExchangeSystem::readFile(const string& filePath) {
             order.side          = stoi(row[2]);
             order.quantity      = stoi(row[3]);
             order.price         = stod(row[4]);
+            order.sequence      = ++orderSequence;    // Assign time priority
 
             string reason;
 
@@ -71,17 +72,44 @@ void ExchangeSystem::readFile(const string& filePath) {
                 continue;
             }
 
+            int originalQuantity = order.quantity;
+
+            // Clear filled orders from previous processing
+            orderBooks[order.instrument].clearFilledOrders();
+            
             orderBooks[order.instrument].processOrder(order);
 
-            // NEW order report
+            // Generate Fill reports for matched orders (counter-party fills)
+            for (const auto& filled : orderBooks[order.instrument].filledOrders) {
+                ExecutionReport fillReport;
+                fillReport.orderId = filled.orderId;
+                fillReport.clientOrderId = filled.clientOrderId;
+                fillReport.instrument = order.instrument;
+                fillReport.side = filled.side;
+                fillReport.price = filled.price;
+                fillReport.quantity = filled.quantity;
+                fillReport.status = 2;  // Fill
+                fillReport.reason = "";
+                fillReport.timestamp = getTimestamp();
+                reports.push_back(fillReport);
+            }
+
+            // Create report for incoming order
             ExecutionReport r;
             r.orderId = order.orderId;
             r.clientOrderId = order.clientOrderId;
             r.instrument = order.instrument;
             r.side = order.side;
             r.price = order.price;
-            r.quantity = order.quantity;
-            r.status = 0;  // 0 = New
+            r.quantity = originalQuantity;
+            
+            // Determine status: Fill if fully matched, New if added to book
+            if (order.quantity == 0) {
+                r.status = 2;  // Fill - fully matched
+            } else {
+                r.status = 0;  // New - partially or not matched
+            }
+            
             r.timestamp = getTimestamp();
 
             reports.push_back(r);

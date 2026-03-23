@@ -13,6 +13,7 @@ public:
     int side{};        // 1 = Buy, 2 = Sell
     double price{};
     int quantity{};
+    long long sequence{};      // Time priority (FIFO) - order of arrival
 
     Order() = default;
     Order(string id, string inst, int s, double p, int q);

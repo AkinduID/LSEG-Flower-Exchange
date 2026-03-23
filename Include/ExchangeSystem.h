@@ -10,6 +10,7 @@ class ExchangeSystem {
 public:
     std::map<std::string, std::string> orderIdMap;
     int orderCounter = 1;
+    long long orderSequence = 0;    // Global sequence counter for time priority
     map<string, OrderBook> orderBooks;
     vector<ExecutionReport> reports;
 
