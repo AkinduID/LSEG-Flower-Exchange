@@ -188,17 +188,28 @@ Write execution_rep.csv
 
 ### Running the Program
 
+
 After building, an executable (e.g., `LSEG_Flower_Exchange.exe` on Windows) will be created in the `build` directory.
 
-To run the program:
+To run the program, provide the path to your input CSV file as an argument:
 
 ```sh
-./LSEG_Flower_Exchange.exe
+./LSEG_Flower_Exchange.exe <input_csv_file>
 ```
 
-Make sure your input file (e.g., `orders.csv`) is in the correct location as expected by the program.
+**Example:**
 
-The output (e.g., `execution_rep.csv`) will be generated in the appropriate directory after execution.
+```sh
+./LSEG_Flower_Exchange.exe ../data/input/order1.csv
+```
+
+The program will automatically save the output execution report to the `../data/output/` directory, using the input file's name with the suffix `_exec_report.csv`.
+
+For example, if your input is `order1.csv`, the output will be:
+
+```
+../data/output/order1_exec_report.csv
+```
 
 ---
 
