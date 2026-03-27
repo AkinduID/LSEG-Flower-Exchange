@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../Include/ExchangeSystem.h"
+#include "../include/ExchangeSystem.h"
 
 TEST(ExchangeSystemTest, DefaultConstructor) {
     ExchangeSystem es;

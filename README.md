@@ -17,7 +17,7 @@ The system reads buy and sell orders from a CSV file, processes them using an **
 
 ## System Architecture
 
-![img.png](Images/img.png)
+![img.png](images/img.png)
 
 * **Input**: `orders.csv`
 * **Processing**: Exchange Engine (Order Book + Matching Engine)

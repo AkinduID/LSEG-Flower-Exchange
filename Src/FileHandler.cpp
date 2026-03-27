@@ -1,6 +1,6 @@
-#include "../Include/ExecutionReport.h"
-#include "../Include/FileHandler.h"
-#include "../Include/Utils.h"
+#include "../include/ExecutionReport.h"
+#include "../include/FileHandler.h"
+#include "../include/Utils.h"
 #include <fstream>
 #include <sstream>
 #include <vector>

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../Include/Order.h"
+#include "../include/Order.h"
 
 TEST(OrderTest, DefaultConstructor) {
     Order order;

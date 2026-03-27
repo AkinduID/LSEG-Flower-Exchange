@@ -8,13 +8,13 @@ on:
     paths-ignore:
       - 'README.md'
       - '.gitignore'
-      - 'Images/**'
+      - 'images/**'
   pull_request:
     branches: [ "main" ]
     paths-ignore:
       - 'README.md'
       - '.gitignore'
-      - 'Images/**'
+      - 'images/**'
 
 jobs:
   build:

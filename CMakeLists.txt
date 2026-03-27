@@ -15,21 +15,21 @@ enable_testing()
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(LSEG_Flower_Exchange
-        Src/main.cpp
-        Src/Order.cpp
-        Include/Order.h
-        Src/ExecutionReport.cpp
-        Include/ExecutionReport.h
-        Src/OrderBook.cpp
-        Include/OrderBook.h
-        Src/OrderBookSide.cpp
-        Include/OrderBookSide.h
-        Src/ExchangeSystem.cpp
-        Include/ExchangeSystem.h
-        Src/Utils.cpp
-        Include/Utils.h
-        Src/FileHandler.cpp
-        Include/FileHandler.h)
+        src/main.cpp
+        src/Order.cpp
+        include/Order.h
+        src/ExecutionReport.cpp
+        include/ExecutionReport.h
+        src/OrderBook.cpp
+        include/OrderBook.h
+        src/OrderBookSide.cpp
+        include/OrderBookSide.h
+        src/ExchangeSystem.cpp
+        include/ExchangeSystem.h
+        src/Utils.cpp
+        include/Utils.h
+        src/FileHandler.cpp
+        include/FileHandler.h)
 
 # Test executables
 add_executable(test_order tests/test_order.cpp)

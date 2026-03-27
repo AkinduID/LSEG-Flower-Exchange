@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../Include/ExecutionReport.h"
+#include "../include/ExecutionReport.h"
 
 TEST(ExecutionReportTest, DefaultConstructor) {
     ExecutionReport er;

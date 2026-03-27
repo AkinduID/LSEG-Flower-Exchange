@@ -1,7 +1,7 @@
 #include <iostream>
 #include <chrono>
-#include "../Include/ExchangeSystem.h"
-#include "../Include/FileHandler.h"
+#include "../include/ExchangeSystem.h"
+#include "../include/FileHandler.h"
 
 using namespace std;
 using namespace std::chrono;
