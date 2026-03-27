@@ -13,9 +13,9 @@ int main() {
 
     chrono::steady_clock::time_point start = chrono::steady_clock::now();
     
-    std::vector<Order> orders = FileHandler::readOrdersFromFile("../Data/order.csv");
+    std::vector<Order> orders = FileHandler::readOrdersFromFile("../data/order.csv");
     exchange.processOrders(orders);
-    FileHandler::writeReportsToFile("../Data/execution_report.csv", exchange.reports);
+    FileHandler::writeReportsToFile("../data/execution_report.csv", exchange.reports);
 
     chrono::steady_clock::time_point end = chrono::steady_clock::now();
 
