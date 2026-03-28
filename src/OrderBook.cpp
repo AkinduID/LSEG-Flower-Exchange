@@ -92,11 +92,9 @@ bool OrderBook::isMatchingOrder(const Order& order) {
 void OrderBook::matchOrder(Order& order) {
 
     if (order.side == 1) { // BUY
-
         for (auto it = sellSide.orders.begin(); it != sellSide.orders.end();) {
-
             if (it->price <= order.price) {
-
+                
                 int tradedQty = std::min(order.quantity, it->quantity);
 
                 // Track the filled sell order
@@ -127,9 +125,7 @@ void OrderBook::matchOrder(Order& order) {
     } else { // SELL
 
         for (auto it = buySide.orders.begin(); it != buySide.orders.end();) {
-
             if (it->price >= order.price) {
-
                 int tradedQty = std::min(order.quantity, it->quantity);
 
                 // Track the filled buy order
