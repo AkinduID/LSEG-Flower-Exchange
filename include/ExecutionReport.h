@@ -15,7 +15,7 @@ public:
     std::string orderId;           ///< System-generated order ID
     std::string clientOrderId;     ///< Client-supplied order ID
     std::string instrument;        ///< Instrument/flower type
-    OrderSide side;                ///< Order side (Buy/Sell)
+    int side;                ///< Order side (Buy/Sell)
     double price;                  ///< Execution price
     int quantity;                  ///< Executed quantity
     OrderStatus status;            ///< Order status (New, Rejected, Fill, Pfill)
@@ -41,7 +41,7 @@ public:
     /**
      * @brief Create a reject report for an order.
      */
-    static ExecutionReport createRejectReport(const Order& order, const std::string& instrument, const std::string& reason);
+    static ExecutionReport createRejectReport(const Order& order,const InputOrder& inputOrder, const std::string& instrument, const std::string& reason);
 };
 
 #endif

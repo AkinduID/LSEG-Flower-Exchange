@@ -12,7 +12,7 @@ ExecutionReport ExecutionReport::createFillReport(const FilledOrder& filledOrder
 	r.orderId = filledOrder.orderId;
 	r.clientOrderId = filledOrder.clientOrderId;
 	r.instrument = instrument;
-	r.side = side;
+	r.side = side==OrderSide::Buy ? 1 : 2;
 	r.price = price;
 	r.quantity = quantity;
 	r.status = OrderStatus::Fill;
@@ -27,7 +27,7 @@ ExecutionReport ExecutionReport::createFillReport(const Order& restingOrder, con
 	r.orderId = restingOrder.orderId;
 	r.clientOrderId = restingOrder.clientOrderId;
 	r.instrument = instrument;
-	r.side = side;
+	r.side = side==OrderSide::Buy ? 1 : 2;
 	r.price = price;
 	r.quantity = quantity;
 	r.status = OrderStatus::Fill;
@@ -42,10 +42,10 @@ ExecutionReport ExecutionReport::createAggressorReport(const Order& incomingOrde
 	r.orderId = incomingOrder.orderId;
 	r.clientOrderId = incomingOrder.clientOrderId;
 	r.instrument = instrument;
-	r.side = incomingOrder.side;
+	r.side = incomingOrder.side==OrderSide::Buy ? 1 : 2;
 	r.price = price;
 	r.quantity = quantity;
-	r.status = OrderStatus::Pfill;
+	r.status = status;
 	r.reason = "";
 	r.timestamp = Utils::getTimestamp();
 	return r;
@@ -57,7 +57,7 @@ ExecutionReport ExecutionReport::createNewReport(const Order& order, const std::
 	r.orderId = order.orderId;
 	r.clientOrderId = order.clientOrderId;
 	r.instrument = instrument;
-	r.side = order.side;
+	r.side = order.side==OrderSide::Buy ? 1 : 2;
 	r.price = order.price;
 	r.quantity = order.quantity;
 	r.status = OrderStatus::New;
@@ -67,12 +67,12 @@ ExecutionReport ExecutionReport::createNewReport(const Order& order, const std::
 }
 
 
-ExecutionReport ExecutionReport::createRejectReport(const Order& order, const std::string& instrument, const std::string& reason) {
+ExecutionReport ExecutionReport::createRejectReport(const Order& order, const InputOrder& inputOrder, const std::string& instrument, const std::string& reason) {
 	ExecutionReport r;
 	r.orderId = order.orderId;
 	r.clientOrderId = order.clientOrderId;
 	r.instrument = instrument;
-	r.side = order.side;
+	r.side = inputOrder.side; // Use original side from input
 	r.price = order.price;
 	r.quantity = order.quantity;
 	r.status = OrderStatus::Rejected;
