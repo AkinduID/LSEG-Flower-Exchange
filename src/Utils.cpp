@@ -48,17 +48,32 @@ bool validateOrder(const Order& o, string& reason) {
         return false;
     }
 
+    if (o.quantity < 10 || o.quantity >= 1000 || o.quantity % 10 != 0) {
+        reason = "Invalid Size";
+        return false;
+    }
+
     if (o.price <= 0) {
         reason = "Invalid Price";
         return false;
     }
 
-    if (o.quantity < 10 || o.quantity > 1000 || o.quantity % 10 != 0) {
-        reason = "Invalid Quantity";
-        return false;
-    }
-
     return true;
+}
+
+Order convertInputOrderToOrder(const InputOrder& input, std::string orderId) {
+    Order order;
+    order.orderId = orderId;
+    order.clientOrderId = input.clientOrderId;
+    order.instrument = input.instrument;
+    order.price = input.price;
+    order.quantity = input.quantity;
+    // Validate side
+    if (input.side == 1) order.side = OrderSide::Buy;
+    else if (input.side == 2) order.side = OrderSide::Sell;
+    else order.side = static_cast<OrderSide>(0); // or define Invalid in enum
+    // sequence should be set by ExchangeSystem
+    return order;
 }
 
 } // namespace Utils
