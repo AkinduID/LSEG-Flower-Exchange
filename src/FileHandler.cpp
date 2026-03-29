@@ -1,13 +1,14 @@
 #include "../include/ExecutionReport.h"
 #include "../include/FileHandler.h"
 #include "../include/Utils.h"
+#include "../include/Order.h"
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <iomanip>
 
-std::vector<Order> FileHandler::readOrdersFromFile(const std::string& filePath) {
-	std::vector<Order> orders;
+std::vector<InputOrder> FileHandler::readOrdersFromFile(const std::string& filePath) {
+	std::vector<InputOrder> orders;
 	std::ifstream file(filePath);
 	if (!file.is_open()) {
 		return orders;
@@ -22,16 +23,13 @@ std::vector<Order> FileHandler::readOrdersFromFile(const std::string& filePath) 
 			row.push_back(segment);
 		}
 		if (row.size() >= 5) {
-			Order order;
-			order.orderId       = Utils::generateOrderId();
-			order.clientOrderId = row[0];
-			order.instrument    = row[1];
-			int sideInt         = std::stoi(row[2]);
-			order.side          = (sideInt == 1) ? OrderSide::Buy : OrderSide::Sell;
-			order.quantity      = std::stoi(row[3]);
-			order.price         = std::stod(row[4]);
-			// sequence should be set by ExchangeSystem
-			orders.push_back(order);
+			InputOrder inputOrder;
+			inputOrder.clientOrderId = row[0];
+			inputOrder.instrument = row[1];
+			inputOrder.side = std::stoi(row[2]);
+			inputOrder.quantity = std::stoi(row[3]);
+			inputOrder.price = std::stod(row[4]);
+			orders.push_back(inputOrder);
 		}
 	}
 	file.close();
@@ -45,7 +43,7 @@ void FileHandler::writeReportsToFile(const std::string& filePath, const std::vec
 		file << r.orderId << ","
 			 << r.clientOrderId << ","
 			 << r.instrument << ","
-			 << (r.side == OrderSide::Buy ? 1 : 2) << ","
+			 << r.side  << ","
 			 << Utils::getStatusText((r.status)) << ","
 			 << r.quantity << ","
 			 << std::fixed << std::setprecision(2) << r.price << ","

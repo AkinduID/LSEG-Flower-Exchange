@@ -14,7 +14,7 @@ public:
 	 * @param filePath Path to the input CSV file.
 	 * @return Vector of orders.
 	 */
-	static std::vector<Order> readOrdersFromFile(const std::string& filePath);
+	static std::vector<InputOrder> readOrdersFromFile(const std::string& filePath);
 
 	/**
 	 * @brief Write execution reports to a CSV file.
