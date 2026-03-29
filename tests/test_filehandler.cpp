@@ -18,7 +18,7 @@ TEST(FileHandlerTest, WriteReportsToFile) {
     r.orderId = "ord1";
     r.clientOrderId = "cl1";
     r.instrument = "Rose";
-    r.side = OrderSide::Buy;
+    r.side = 1;
     r.status = OrderStatus::New;
     r.quantity = 10;
     r.price = 10.0;

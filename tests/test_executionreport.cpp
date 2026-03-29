@@ -22,9 +22,16 @@ TEST(ExecutionReportTest, CreateNewReport) {
 TEST(ExecutionReportTest, CreateRejectReport) {
     Order order("cl1", "Rose", OrderSide::Buy, 10.5, 100);
     order.orderId = "ord1";
-    auto report = ExecutionReport::createRejectReport(order, "Rose", "Invalid");
+    InputOrder inputOrder;
+    inputOrder.clientOrderId = "cl1";
+    inputOrder.instrument = "Rose";
+    inputOrder.side = 3; // Invalid side for test
+    inputOrder.quantity = 100;
+    inputOrder.price = 10.5;
+    auto report = ExecutionReport::createRejectReport(order, inputOrder, "Rose", "Invalid");
     EXPECT_EQ(report.status, OrderStatus::Rejected);
     EXPECT_EQ(report.reason, "Invalid");
+    EXPECT_EQ(static_cast<int>(report.side), 3);
 }
 
 // Add more ExecutionReport tests here

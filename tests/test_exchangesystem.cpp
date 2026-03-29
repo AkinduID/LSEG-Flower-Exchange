@@ -8,9 +8,9 @@ TEST(ExchangeSystemTest, DefaultConstructor) {
 
 TEST(ExchangeSystemTest, ProcessValidAndInvalidOrders) {
     ExchangeSystem es;
-    Order validOrder("cl1", "Rose", OrderSide::Buy, 10.5, 100);
-    Order invalidOrder("cl2", "Invalid", OrderSide::Buy, 10.5, 100);
-    std::vector<Order> orders = {validOrder, invalidOrder};
+    InputOrder validOrder("cl1", "Rose", 2, 10.5, 100);
+    InputOrder invalidOrder("cl2", "Invalid", 2, 10.5, 100);
+    std::vector<InputOrder> orders = {validOrder, invalidOrder};
     es.processOrders(orders);
     // Should have at least one report for valid and one for invalid
     EXPECT_GE(es.reports.size(), 2);
