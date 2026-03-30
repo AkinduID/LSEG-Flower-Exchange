@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 4.1)
+cmake_minimum_required(VERSION 3.20)
 
 project(LSEG_Flower_Exchange)
+
+set(CMAKE_CXX_STANDARD 14)
 
 # GoogleTest setup
 include(FetchContent)
@@ -12,28 +14,21 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-set(CMAKE_CXX_STANDARD 14)
-
+# Main executable
 add_executable(LSEG_Flower_Exchange
         src/main.cpp
         src/Order.cpp
-        include/Order.h
         src/ExecutionReport.cpp
-        include/ExecutionReport.h
         src/OrderBook.cpp
-        include/OrderBook.h
         src/OrderBookSide.cpp
-        include/OrderBookSide.h
         src/ExchangeSystem.cpp
-        include/ExchangeSystem.h
         src/Utils.cpp
-        include/Utils.h
         src/FileHandler.cpp
-        include/FileHandler.h)
+)
 
-# Test executables
+target_include_directories(LSEG_Flower_Exchange PRIVATE include)
 
-# Test executables with all required sources
+# Shared source files for tests
 set(SRC_FILES
         src/Order.cpp
         src/ExecutionReport.cpp
@@ -44,18 +39,23 @@ set(SRC_FILES
         src/FileHandler.cpp
 )
 
+# Tests
 add_executable(test_order tests/test_order.cpp ${SRC_FILES})
 target_link_libraries(test_order gtest_main)
+target_include_directories(test_order PRIVATE include)
 add_test(NAME test_order COMMAND test_order)
 
 add_executable(test_orderbook tests/test_orderbook.cpp ${SRC_FILES})
 target_link_libraries(test_orderbook gtest_main)
+target_include_directories(test_orderbook PRIVATE include)
 add_test(NAME test_orderbook COMMAND test_orderbook)
 
 add_executable(test_executionreport tests/test_executionreport.cpp ${SRC_FILES})
 target_link_libraries(test_executionreport gtest_main)
+target_include_directories(test_executionreport PRIVATE include)
 add_test(NAME test_executionreport COMMAND test_executionreport)
 
 add_executable(test_exchangesystem tests/test_exchangesystem.cpp ${SRC_FILES})
 target_link_libraries(test_exchangesystem gtest_main)
+target_include_directories(test_exchangesystem PRIVATE include)
 add_test(NAME test_exchangesystem COMMAND test_exchangesystem)

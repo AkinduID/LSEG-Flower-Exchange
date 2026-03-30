@@ -32,7 +32,7 @@ std::string generateOrderId() {
     return "ord" + std::to_string(counter++);
 }
 
-bool validateOrder(const Order& o, string& reason) {
+bool validateOrder(const Order& o, std::string& reason) {
 
     if (o.instrument != "Rose" &&
         o.instrument != "Lavender" &&

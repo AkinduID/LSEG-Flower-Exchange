@@ -35,6 +35,6 @@ namespace Utils {
      * @param reason Output parameter for the reason if invalid.
      * @return True if valid, false otherwise.
      */
-    bool validateOrder(const Order& order, string& reason);
+    bool validateOrder(const Order& order, std::string& reason);
     Order convertInputOrderToOrder(const InputOrder& input, std::string orderId);
 }

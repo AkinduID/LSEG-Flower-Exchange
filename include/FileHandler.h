@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include "Order.h"
+#include "ExecutionReport.h"
 
 /**
  * @class FileHandler

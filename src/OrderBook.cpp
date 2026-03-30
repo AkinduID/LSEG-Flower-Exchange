@@ -1,6 +1,6 @@
 #include "./../include/OrderBook.h"
 #include <algorithm>
-
+#include <list>
 #include <iostream>
 #include <iomanip>
 
@@ -88,7 +88,7 @@ void OrderBook::processOrder(Order& order) {
 }
 
 bool OrderBook::isMatchingOrder(const Order& order) {
-    if (order.side == 1) { // BUY
+    if (order.side == OrderSide::Buy) { // BUY
         if (sellSide.orders.empty()) return false;
         return sellSide.orders.begin()->first <= order.price;
     } else { // SELL
@@ -99,7 +99,7 @@ bool OrderBook::isMatchingOrder(const Order& order) {
 
 void OrderBook::matchOrder(Order& order) {
 
-    if (order.side == 1) { // BUY against Sell Side (lowest price first)
+    if (order.side == OrderSide::Buy) { // BUY against Sell Side (lowest price first)
 
         while (order.quantity > 0 && !sellSide.orders.empty()) {
             auto it = sellSide.orders.begin(); // Lowest price
@@ -114,7 +114,7 @@ void OrderBook::matchOrder(Order& order) {
                 filled.clientOrderId = listIt->clientOrderId;
                 filled.price = listIt->price;
                 filled.quantity = tradedQty;
-                filled.side = 2;
+                filled.side = OrderSide::Sell;
                 filledOrders.push_back(filled);
 
                 order.quantity -= tradedQty;
@@ -148,7 +148,7 @@ void OrderBook::matchOrder(Order& order) {
                 filled.clientOrderId = listIt->clientOrderId;
                 filled.price = listIt->price;
                 filled.quantity = tradedQty;
-                filled.side = 1;
+                filled.side = OrderSide::Buy;
                 filledOrders.push_back(filled);
 
                 order.quantity -= tradedQty;

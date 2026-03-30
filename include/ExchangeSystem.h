@@ -3,6 +3,7 @@
 
 #include "ExecutionReport.h"
 #include "OrderBook.h"
+#include "Order.h"
 
 using namespace std;
 
@@ -18,7 +19,7 @@ public:
 
     /**
      * @brief Process a list of orders, updating order books and generating reports.
-     * @param orders Vector of orders to process.
+     * @param inputOrders Vector of input orders to process.
      */
-    void processOrders(const std::vector<InputOrder>& InputOrders);
+    void processOrders(const std::vector<InputOrder>& inputOrders);
 };

@@ -46,13 +46,13 @@ enum class OrderStatus {
  */
 class Order {
 public:
-    string orderId;           ///< System-generated order ID
-    string clientOrderId;     ///< Client-supplied order ID
-    string instrument;        ///< Instrument/flower type
-    OrderSide side; ///< Order side (Buy/Sell)
-    double price{};           ///< Order price
-    int quantity{};           ///< Order quantity
-    long long sequence{};     ///< Time priority (FIFO) - order of arrival
+    std::string orderId;           ///< System-generated order ID
+    std::string clientOrderId;     ///< Client-supplied order ID
+    std::string instrument;        ///< Instrument/flower type
+    OrderSide side = OrderSide::Buy; ///< Order side (Buy/Sell)
+    double price = 0.0;           ///< Order price
+    int quantity = 0;           ///< Order quantity
+    long long sequence = 0;     ///< Time priority (FIFO) - order of arrival
 
     /**
      * @brief Default constructor.
@@ -61,7 +61,7 @@ public:
     /**
      * @brief Parameterized constructor.
      */
-    Order(string id, string inst, OrderSide s, double p, int q);
+    Order(std::string id, std::string inst, OrderSide s, double p, int q);
 
     /**
      * @brief Equality operator for orders.
