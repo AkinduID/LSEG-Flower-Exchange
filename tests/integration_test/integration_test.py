@@ -30,11 +30,15 @@ def run_application(order_file, output_file):
     Runs the application with the given order file and writes output to output_file.
     Assumes the application takes input and output file paths as arguments.
     """
+    # Run the app in the directory where the executable resides
+    app_dir = os.path.dirname(APP_EXECUTABLE)
+    print(f'Running application: {APP_EXECUTABLE} with input: {order_file} and output: {output_file}')
+    # The application uses a hardcoded output path, so only pass the input file
     result = subprocess.run([
         APP_EXECUTABLE,
-        '--input', order_file,
-        '--output', output_file
-    ], capture_output=True, text=True)
+        order_file
+    ], capture_output=True, text=True, cwd=app_dir if app_dir else None)
+    print(result.stdout)
     return result.returncode, result.stdout, result.stderr
 
 
@@ -84,16 +88,17 @@ def main():
     for filename in os.listdir(INPUT_DIR):
         if not filename.endswith('.csv'):
             continue
-        input_path = os.path.join(INPUT_DIR, filename)
+        # Use absolute paths for all files
+        input_path = os.path.abspath(os.path.join(INPUT_DIR, filename))
         base, ext = os.path.splitext(filename)
-        output_path = os.path.join(OUTPUT_DIR, f"{base}_exec_report{ext}")
+        output_path = os.path.abspath(os.path.join(OUTPUT_DIR, f"{base}_exec_report{ext}"))
         # Map order1.csv -> example1_output.csv, order2.csv -> example2_output.csv, etc.
         if filename.startswith('order') and filename.endswith('.csv'):
             num = filename[len('order'):-len('.csv')]
             expected_filename = f"example{num}_output.csv"
         else:
             expected_filename = filename  # fallback, should not happen
-        expected_path = os.path.join(VALIDATE_DIR, expected_filename)
+        expected_path = os.path.abspath(os.path.join(VALIDATE_DIR, expected_filename))
 
         print(f'Running test for {filename}...')
         rc, out, err = run_application(input_path, output_path)
