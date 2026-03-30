@@ -49,7 +49,7 @@ public:
     string orderId;           ///< System-generated order ID
     string clientOrderId;     ///< Client-supplied order ID
     string instrument;        ///< Instrument/flower type
-    OrderSide side; ///< Order side (Buy/Sell)
+    OrderSide side;           ///< Order side (Buy/Sell)
     double price{};           ///< Order price
     int quantity{};           ///< Order quantity
     long long sequence{};     ///< Time priority (FIFO) - order of arrival
