@@ -21,19 +21,29 @@ void OrderBook::printOrderBook(const std::string& instrument) const {
               << "\n";
 
     std::cout << "-----------------------------------------------------------\n";
-    auto buyIt = buySide.orders.begin();
+
+    // Buy side (descending prices)
+    auto buyIt = buySide.orders.rbegin();
+    // Sell side (ascending prices)
     auto sellIt = sellSide.orders.begin();
 
-    while (buyIt != buySide.orders.end() || sellIt != sellSide.orders.end()) {
+    // Secondary iterators for the lists at each price level
+    auto buyListIt = (buyIt != buySide.orders.rend()) ? buyIt->second.begin() : list<Order>::iterator();
+    auto sellListIt = (sellIt != sellSide.orders.end()) ? sellIt->second.begin() : list<Order>::iterator();
 
-        // BUY SIDE (highest price first)
-        if (buyIt != buySide.orders.end()) {
-            std::cout << std::left << std::setw(12) << buyIt->orderId;
-            std::cout << std::right << std::setw(10) << buyIt->quantity;
-            std::cout << std::right << std::setw(12) << std::fixed << std::setprecision(2) 
-                << buyIt->price;
+    while (buyIt != buySide.orders.rend() || sellIt != sellSide.orders.end()) {
 
-            ++buyIt;
+        // BUY SIDE
+        if (buyIt != buySide.orders.rend()) {
+            std::cout << std::left << std::setw(12) << buyListIt->orderId;
+            std::cout << std::right << std::setw(10) << buyListIt->quantity;
+            std::cout << std::right << std::setw(12) << std::fixed << std::setprecision(2) << buyListIt->price;
+            
+            ++buyListIt;
+            if (buyListIt == buyIt->second.end()) {
+                ++buyIt;
+                if (buyIt != buySide.orders.rend()) buyListIt = buyIt->second.begin();
+            }
         } else {
             std::cout << std::setw(12) << ""
                       << std::setw(10) << ""
@@ -42,15 +52,18 @@ void OrderBook::printOrderBook(const std::string& instrument) const {
 
         std::cout << " | ";
 
-        // SELL SIDE (lowest price first)
+        // SELL SIDE
         if (sellIt != sellSide.orders.end()) {
             std::cout << std::setfill(' ');
-            std::cout << std::right << std::setw(12) << std::fixed << std::setprecision(2) 
-                << sellIt->price;
-
-            std::cout << std::right << std::setw(10) << sellIt->quantity;
-            std::cout << std::left << std::setw(12) << sellIt->orderId;
-            ++sellIt;
+            std::cout << std::right << std::setw(12) << std::fixed << std::setprecision(2) << sellListIt->price;
+            std::cout << std::right << std::setw(10) << sellListIt->quantity;
+            std::cout << std::left << std::setw(12) << sellListIt->orderId;
+            
+            ++sellListIt;
+            if (sellListIt == sellIt->second.end()) {
+                ++sellIt;
+                if (sellIt != sellSide.orders.end()) sellListIt = sellIt->second.begin();
+            }
         } else {
             std::cout << std::setw(12) << ""
                       << std::setw(10) << ""
@@ -65,10 +78,8 @@ void OrderBook::printOrderBook(const std::string& instrument) const {
 
 
 void OrderBook::processOrder(Order& order) {
-
-    if (isMatchingOrder(order)) {
-        matchOrder(order);
-    }
+    // Merge matching and processing to avoid redundant scans
+    matchOrder(order);
 
     // If still remaining → add to book
     if (order.quantity > 0) {
@@ -77,82 +88,83 @@ void OrderBook::processOrder(Order& order) {
 }
 
 bool OrderBook::isMatchingOrder(const Order& order) {
-
-    if (order.side == OrderSide::Buy) { // BUY
-        for (const auto& sell : sellSide.orders) {
-            if (sell.price <= order.price)
-                return true;
-        }
+    if (order.side == 1) { // BUY
+        if (sellSide.orders.empty()) return false;
+        return sellSide.orders.begin()->first <= order.price;
     } else { // SELL
-        for (const auto& buy : buySide.orders) {
-            if (buy.price >= order.price)
-                return true;
-        }
+        if (buySide.orders.empty()) return false;
+        return buySide.orders.rbegin()->first >= order.price;
     }
-
-    return false;
 }
 
 void OrderBook::matchOrder(Order& order) {
 
-    if (order.side == OrderSide::Buy) { // BUY
-        for (auto it = sellSide.orders.begin(); it != sellSide.orders.end();) {
-            if (it->price <= order.price) {
-                
-                int tradedQty = std::min(order.quantity, it->quantity);
+    if (order.side == 1) { // BUY against Sell Side (lowest price first)
 
-                // Track the filled sell order
+        while (order.quantity > 0 && !sellSide.orders.empty()) {
+            auto it = sellSide.orders.begin(); // Lowest price
+            if (it->first <= order.price) {
+                auto& orderList = it->second;
+                auto listIt = orderList.begin();
+
+                int tradedQty = std::min(order.quantity, listIt->quantity);
+
                 FilledOrder filled;
-                filled.orderId = it->orderId;
-                filled.clientOrderId = it->clientOrderId;
-                filled.price = it->price;
+                filled.orderId = listIt->orderId;
+                filled.clientOrderId = listIt->clientOrderId;
+                filled.price = listIt->price;
                 filled.quantity = tradedQty;
-                filled.side = OrderSide::Sell;  // Sell side
+                filled.side = 2;
                 filledOrders.push_back(filled);
 
                 order.quantity -= tradedQty;
-                it->quantity -= tradedQty;
+                listIt->quantity -= tradedQty;
 
-                // Remove if fully matched
-                if (it->quantity == 0)
-                    it = sellSide.orders.erase(it);
-                else
-                    ++it;
+                if (listIt->quantity == 0) {
+                    orderList.erase(listIt);
+                }
 
-                if (order.quantity == 0)
-                    return;
+                if (orderList.empty()) {
+                    sellSide.orders.erase(it);
+                }
             } else {
-                ++it;
+                break; // Sell price too high
             }
         }
 
-    } else { // SELL
+    } else { // SELL against Buy Side (highest price first)
 
-        for (auto it = buySide.orders.begin(); it != buySide.orders.end();) {
-            if (it->price >= order.price) {
-                int tradedQty = std::min(order.quantity, it->quantity);
+        // Using a while loop with direct erase to avoid reverse iterator complexities
+        while (order.quantity > 0 && !buySide.orders.empty()) {
+            auto it = buySide.orders.rbegin(); // Highest price
+            if (it->first >= order.price) {
+                auto& orderList = it->second;
+                auto listIt = orderList.begin();
 
-                // Track the filled buy order
+                int tradedQty = std::min(order.quantity, listIt->quantity);
+
                 FilledOrder filled;
-                filled.orderId = it->orderId;
-                filled.clientOrderId = it->clientOrderId;
-                filled.price = it->price;
+                filled.orderId = listIt->orderId;
+                filled.clientOrderId = listIt->clientOrderId;
+                filled.price = listIt->price;
                 filled.quantity = tradedQty;
-                filled.side = OrderSide::Buy;  // Buy side
+                filled.side = 1;
                 filledOrders.push_back(filled);
 
                 order.quantity -= tradedQty;
-                it->quantity -= tradedQty;
+                listIt->quantity -= tradedQty;
 
-                if (it->quantity == 0)
-                    it = buySide.orders.erase(it);
-                else
-                    ++it;
+                if (listIt->quantity == 0) {
+                    orderList.erase(listIt);
+                }
 
-                if (order.quantity == 0)
-                    return;
+                if (orderList.empty()) {
+                    // Erase the price level entirely
+                    auto baseIt = std::prev(buySide.orders.end());
+                    buySide.orders.erase(baseIt);
+                }
             } else {
-                ++it;
+                break; // Buy price too low
             }
         }
     }

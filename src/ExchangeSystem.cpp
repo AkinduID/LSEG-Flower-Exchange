@@ -1,7 +1,7 @@
-#include "../include/ExchangeSystem.h"
-#include "../include/Order.h"
-#include "../include/Utils.h"
-#include "../include/ExecutionReport.h"
+#include "../Include/ExchangeSystem.h"
+#include "../Include/Order.h"
+#include "../Include/Utils.h"
+#include "../Include/ExecutionReport.h"
 
 #include <fstream>
 #include <sstream>
@@ -12,41 +12,22 @@
 
 using namespace std;
 
-void ExchangeSystem::processOrders(const std::vector<InputOrder>& inputOrders) {
-    for (auto inputOrder : inputOrders) {
-        Order order = Utils::convertInputOrderToOrder(inputOrder, Utils::generateOrderId());
+void ExchangeSystem::processOrders(const vector<Order>& orders) {
+    for (auto order : orders) {
         order.sequence = ++orderSequence; // Assign time priority
-        std::string reason;
+        string reason;
         if (!Utils::validateOrder(order, reason)) {
-            ExecutionReport r = ExecutionReport::createRejectReport(order,inputOrder, 
-                order.instrument, reason);
-
+            ExecutionReport r = ExecutionReport::createRejectReport(order, order.instrument, reason);
             reports.push_back(r);
             continue;
         }
-        // Order order = Utils::convertInputOrderToOrder(inputOrder, Utils::generateOrderId());
         int originalQuantity = order.quantity;
         orderBooks[order.instrument].clearFilledOrders();
         orderBooks[order.instrument].processOrder(order);
-        int matchedQty = 0;
-        int fillsCount = orderBooks[order.instrument].filledOrders.size();
-        int fillIndex = 0;
         for (const auto& filled : orderBooks[order.instrument].filledOrders) {
-            ++fillIndex;
-            // Always report the fill for the resting order
-            reports.push_back(ExecutionReport::createFillReport(filled, order.instrument, 
-                filled.side, filled.price, filled.quantity));
-
-            matchedQty += filled.quantity;
-            // For each match, generate an aggressor report for the incoming order
-            OrderStatus status = OrderStatus::Pfill;
-            if (fillIndex == fillsCount && order.quantity == 0) {
-                status = OrderStatus::Fill;
-            }
-            reports.push_back(ExecutionReport::createAggressorReport(order, order.instrument, 
-                filled.price, filled.quantity, status));
+            reports.push_back(ExecutionReport::createFillReport(filled, order.instrument, filled.side, filled.price, filled.quantity));
+            reports.push_back(ExecutionReport::createAggressorReport(order, order.instrument, filled.price, filled.quantity, (order.quantity == 0) ? 2 : 3));
         }
-        // If the incoming order was not matched at all, report as new
         if (order.quantity > 0 && order.quantity == originalQuantity) {
             reports.push_back(ExecutionReport::createNewReport(order, order.instrument));
         }
